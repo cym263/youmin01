@@ -1,0 +1,27 @@
+Step 1: (main folder; for config setup?)
+git clone https://gitlab.physics.ox.ac.uk/aopp-pred/ecearth-config.git
+(youminchen and Po***09)
+("git clone git@gitlab.physics.ox.ac.uk:aopp-pred/ecearth-config.git"  doesn't work because the public key was not set up correctly)
+
+Step 2: (main folder; connect earlier model version with permision)
+ svn --username youmin.chen copy -m "StochasticLand schemes from r4380 for cirrus test2" https://svn.ec-earth.org/ecearth3/trunk https://svn.ec-earth.org/ecearth3/branches/development/2017/r4380-cirrus-test2
+
+Committed revision 4403. (output message)
+(see website: https://dev.ec-earth.org/projects/ecearth3/repository about the progress of this step)
+
+Step 3: (model folder:ecearth; checkout model, taking long time)
+svn --username youmin.chen checkout https://svn.ec-earth.org/ecearth3/branches/development/2017/r4380-cirrus-test2 r4380-cirrus-test2
+
+cd r<REVISION>-<NAME>
+export ECEARTH_HOME="$PWD"
+
+
+Step 4: (sources folder; copy config_build.cirrus.xml from earlier config folder)
+cp ../../../ecearth-config/aopp-cirrus/build/config-build.cirrus.xml .
+util/ec-conf/ec-conf -p cirrus-intel config-build.cirrus.xml  (here add HDF5*** and modify "oasis3" paremeters)
+
+
+Step 5: Building model (ECEARTH_HOME folder;maybe ECEARTH_BUILD_HOME folder as in "sources")
+cp ../../ecearth-config/aopp-cirrus/build/build-ecearth-cirrus.sh .
+(modify build-ecearth-cirrus.sh)
+ sbatch build-ecearth-cirrus.sh (failed here; what to do......)

@@ -1,0 +1,63 @@
+Step earlier for config file
+
+
+Step 1: (any folder; link to trunk r4380; need password Po**9; quick finish; show message on website "r4380-oxford-ym")
+ svn --username youmin.chen copy -m "Stochastic land schemes from r4380 for development" https://svn.ec-earth.org/ecearth3/trunk https://svn.ec-earth.org/ecearth3/branches/development/2017/r4380-oxford-ym
+
+Authentication realm: <https://svn.ec-earth.org:443> Subversion (ec-earth.org)
+Password for 'youmin.chen': ***********
+Committed revision 4414.
+
+Step 2: (checkout; take long time; need password; output number 4414)
+svn --username youmin.chen checkout https://svn.ec-earth.org/ecearth3/branches/development/2017/r4380-oxford-ym  r4380-oxford-ym
+
+
+Step 3: (In folder "r4380-oxford-ym")
+  export ECEARTH_HOME="$PWD" (may not have to manully do it, I guess the script may do it)
+
+Step 4: (In sources folder;)
+cp /home/ms/gb/ukyc/EC-Earth-cca_01/ecearth-config/ecmwf-cca/build/3.2/config-build-intel14.xml .
+cp config-build-intel14.xml config-build.xml
+edit file "config-build.xml" (change xios-1.0 into xios-2; set cca sources PATH)
+
+Then: util/ec-conf/ec-conf -p cca-intel-mpi config-build.xml
+
+Step 5: (Build model; not source folder here)
+cd "$ECEARTH_HOME"
+cp /home/ms/gb/ukyc/EC-Earth-cca_01/ecearth-config/ecmwf-cca/build/3.2/build-ecearth-3.2-intel14.sh .
+cp build-ecearth-3.2-intel14.sh build-ecearth-3.2.sh
+qsub build-ecearth-3.2.sh
+(raw method: ln -s $HOME/ecearth-config/ecmwf-cca/build/3.2/build-ecearth-3.2.sh .)
+(raw method: cp /home/ms/gb/ukyc/EC-Earth-cca_01/ecearth-config/ecmwf-cca/build/3.2/build-ecearth-3.2.sh .)
+(note: "xios-1.0" in build-ecearth-3.2.sh)
+
+Step 5: (run model; cd runtime/classic;)
+cp /home/ms/gb/ukyc/EC-Earth-cca_01/ecearth-config/ecmwf-cca/run/3.2/config-run-intel14.xml .
+cp config-run-intel14.xml config-run.xml
+edit file "config-run.xml" (set cca sources PATH, same PATH as in STEP 4; Other changes:RUN_END_DATE;RST_FREQ;RUN_NUM_LEGS)
+
+../../sources/util/ec-conf/ec-conf -p cca-intel config-run.xml
+(will change file paremeters for "ece-ifs+nemo.sh")
+
+
+Step 6: (cca run script; in runtime/classic)
+
+cp platform/cca.job.tmpl cca.job (and edit cca.job)
+qsub cca.job
+
+(if re-do it, remove previous output at "/scratch/ms/gb/ukyc/ECEARTH-RUNS/")
+Question: at earlier time, if the output folder exists, the job will stop; but this time it keep going; how about "re-start" the job because the output folder is already there???)
+
+
+run error: 
+cp ../../../../ecearth/r4380-oxford-test1/sources/ifs-36r4/bin/* /perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/ifs-36r4/bin/.
+(cp: cannot stat `/perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/ifs-36r4/bin/ifsmaster-ecconf': No such file or directory)
+
+cp -r ../../../../ecearth/r4380-oxford-test1/sources/nemo-3.6/CONFIG/ORCA1L75_LIM3/BLD /perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/nemo-3.6/CONFIG/ORCA1L75_LIM3/.
+(cp: cannot stat `/perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/nemo-3.6/CONFIG/ORCA1L75_LIM3/BLD/bin/nemo.exe': No such file or directory)
+
+cp -r ../../../../ecearth/r4380-oxford-test1/sources/runoff-mapper/bin/runoff-mapper.exe /perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/runoff-mapper/bin/.
+(cp: cannot stat `/perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/runoff-mapper/bin/runoff-mapper.exe': No such file or directory)
+
+cp -r ../../../../ecearth/r4380-oxford-test1/sources/xios-2/bin ../../sources/xios-2/.
+(cp: cannot stat `/perm/ms/gb/ukyc/my_ecearth/r4380-oxford-ym/sources/xios-2/bin/xios_server.exe': No such file or directory)
